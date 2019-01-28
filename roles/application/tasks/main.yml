@@ -1,0 +1,36 @@
+---
+- name: "Install java runtime"
+  package:
+    name: "java-1.8.0-openjdk-headless.x86_64"
+    state: latest
+- name: "Create application directory"
+  file:
+    path: /opt/car-rental
+    state: directory
+- name: "Send application jar"
+  copy:
+    src: ../../src/target/rentalapp-0.0.1-SNAPSHOT.jar
+    dest: /opt/car-rental
+    remote_src: no
+- name: "Copy car-rental.service"
+  template:
+    src: car-rental.service
+    dest: /etc/systemd/system/car-rental.service
+- name: "Start application"
+  systemd:
+    name: car-rental.service
+    enabled: yes
+    state: restarted
+- name: "Install telegraf"
+  yum:
+    name: "{{telegraf_url}}"
+    state: present
+- name: "Copy telegraf.conf"
+  template:
+    src: telegraf.conf
+    dest: /etc/telegraf/telegraf.conf
+- name: "Start telegraf"
+  service:
+    name: "telegraf"
+    enabled: yes
+    state: restarted

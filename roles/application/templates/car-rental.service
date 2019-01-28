@@ -1,0 +1,13 @@
+[Unit]
+Description=Car rental application
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/car-rental/
+ExecStart=/usr/bin/java -jar /opt/car-rental/rentalapp-0.0.1-SNAPSHOT.jar
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

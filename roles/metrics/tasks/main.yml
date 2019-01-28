@@ -1,0 +1,51 @@
+---
+- name: "Install influx db"
+  yum:
+    name: "{{influx_db_url}}"
+    state: present
+- name: "Start influx db"
+  service:
+    name: influxdb
+    state: started
+- name: "Install grafana"
+  yum:
+    name: "{{grafana_url}}"
+    state: present
+- name: "Adding grafana configuration to server"
+  template:
+    src: grafana.ini
+    dest: /etc/grafana/grafana.ini
+- name: "Start grafana"
+  service:
+    name: "grafana-server"
+    state: started
+- name: "Add influx db datasource"
+  grafana_datasource:
+    name: "influxdb"
+    grafana_url: "http://127.0.0.1:8080"
+    grafana_user: "admin"
+    grafana_password: "admin"
+    org_id: "1"
+    ds_type: "influxdb"
+    url: "http://127.0.0.1:8086"
+    database: "metrics"
+    is_default: yes
+    tls_skip_verify: yes
+- name: "Create dashboards directory"
+  file:
+    path: /tmp/dashboards
+    state: directory
+- name: "Copy exported dashboard"
+  template:
+    src: dashboard.json
+    dest: /tmp/dashboards
+- name: "Import grafana dashboard"
+  grafana_dashboard:
+    grafana_url: "http://127.0.0.1:8080"
+    grafana_user: "admin"
+    grafana_password: "admin"
+    slug: "apache"
+    state: present
+    overwrite: yes
+    path: /tmp/dashboards/dashboard.json
+  ignore_errors: yes

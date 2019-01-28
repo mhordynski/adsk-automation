@@ -1,0 +1,13 @@
+---
+- hosts: loadbalancer
+  become: yes
+  roles:
+    - loadbalancer
+- hosts: application
+  become: yes
+  roles:
+    - application
+- hosts: metrics
+  become: yes
+  roles:
+    - metrics
