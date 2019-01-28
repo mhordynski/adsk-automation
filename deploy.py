@@ -50,7 +50,7 @@ class Main:
         parser.add_argument('--skip_build', help='Pass this flag to skip build before deployment',
                             type=bool, default=False)
         parser.add_argument('--aws_region', help='Name of AWS region',
-                            type=str, default='')
+                            type=str, default='eu-west-1')
         return parser.parse_args()
 
     def get_repo(self):
